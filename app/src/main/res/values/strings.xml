@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">MexeAI</string>
+    <string name="front_camera">Frontal</string>
+    <string name="back_camera">Traseira</string>
+</resources>
