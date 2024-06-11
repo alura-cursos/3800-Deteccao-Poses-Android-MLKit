@@ -30,6 +30,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.alura.mexeai.extensions.pxToDp
 import com.alura.mexeai.ui.screens.camera.CameraPreview
 import com.alura.mexeai.ui.screens.camera.CameraViewModel
+import com.google.mlkit.vision.pose.PoseDetection
+import com.google.mlkit.vision.pose.PoseDetector
+import com.google.mlkit.vision.pose.defaults.PoseDetectorOptions
 
 
 @OptIn(ExperimentalGetImage::class)
@@ -39,6 +42,14 @@ fun PoseDetectionScreen() {
     val state by viewModel.uiState.collectAsState()
 
     var pointPosition by remember { mutableStateOf(PointF(0f, 0f)) }
+
+    val options = remember {
+        PoseDetectorOptions.Builder()
+            .setDetectorMode(PoseDetectorOptions.STREAM_MODE)
+            .build()
+    }
+
+    val poseDetector = remember { PoseDetection.getClient(options) }
 
     val imageAnalyzer = ImageAnalysis.Analyzer { imageProxy ->
         imageProxy.image?.let { inputImage ->
