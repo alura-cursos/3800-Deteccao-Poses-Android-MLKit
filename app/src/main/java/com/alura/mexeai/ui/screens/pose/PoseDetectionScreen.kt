@@ -111,8 +111,8 @@ fun PoseDetectionScreen() {
                             redColor,
                             radius = 50f,
                             center = Offset(
-                                pointPosition.x,
-                                pointPosition.y
+                                setScale(pointPosition.x, scaleFactor = state.scaleFactor, state.postScaleWidthOffset),
+                                setScale(pointPosition.y, scaleFactor = state.scaleFactor)
                             )
                         )
                     }
