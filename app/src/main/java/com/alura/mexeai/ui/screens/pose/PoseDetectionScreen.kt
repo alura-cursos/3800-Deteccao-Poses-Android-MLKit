@@ -32,6 +32,7 @@ import com.alura.mexeai.ui.screens.camera.CameraPreview
 import com.alura.mexeai.ui.screens.camera.CameraViewModel
 import com.google.mlkit.vision.pose.PoseDetection
 import com.google.mlkit.vision.pose.PoseDetector
+import com.google.mlkit.vision.pose.PoseLandmark
 import com.google.mlkit.vision.pose.defaults.PoseDetectorOptions
 
 
@@ -54,6 +55,19 @@ fun PoseDetectionScreen() {
     val imageAnalyzer = ImageAnalysis.Analyzer { imageProxy ->
         imageProxy.image?.let { inputImage ->
             viewModel.setScreenSize(Pair(imageProxy.height, imageProxy.width))
+
+            poseDetector
+                .process(inputImage, imageProxy.imageInfo.rotationDegrees)
+                .addOnSuccessListener { detectedPose ->
+                    detectedPose.getPoseLandmark(PoseLandmark.LEFT_WRIST)?.let {
+                        it.position.let { position ->
+                            pointPosition = position
+                        }
+                    }
+                }
+                .addOnCompleteListener {
+                    imageProxy.close()
+                }
         }
     }
 
