@@ -6,12 +6,10 @@ import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.view.CameraController
 import androidx.camera.view.LifecycleCameraController
-import androidx.compose.foundation.background
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -20,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onSizeChanged
@@ -27,11 +26,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.alura.mexeai.extensions.pxToDp
 import com.alura.mexeai.ui.screens.camera.CameraPreview
 import com.alura.mexeai.ui.screens.camera.CameraViewModel
 import com.google.mlkit.vision.pose.PoseDetection
-import com.google.mlkit.vision.pose.PoseDetector
 import com.google.mlkit.vision.pose.PoseLandmark
 import com.google.mlkit.vision.pose.defaults.PoseDetectorOptions
 
@@ -103,15 +100,33 @@ fun PoseDetectionScreen() {
                     .fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                Box(
+
+                val redColor = Color(0xFFFF0000)
+                Canvas(
                     modifier = Modifier
-                        .offset(
-                            x = pointPosition.x.pxToDp(),
-                            y = pointPosition.y.pxToDp()
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    onDraw = {
+                        drawCircle(
+                            redColor,
+                            radius = 50f,
+                            center = Offset(
+                                pointPosition.x,
+                                pointPosition.y
+                            )
                         )
-                        .size(50.dp)
-                        .background(Color.Red, CircleShape)
+                    }
                 )
+
+//                Box(
+//                    modifier = Modifier
+//                        .offset(
+//                            x = pointPosition.x.pxToDp(),
+//                            y = pointPosition.y.pxToDp()
+//                        )
+//                        .size(50.dp)
+//                        .background(Color.Red, CircleShape)
+//                )
             }
         }
     }
