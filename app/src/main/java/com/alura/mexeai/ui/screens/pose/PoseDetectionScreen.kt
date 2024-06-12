@@ -105,22 +105,16 @@ fun PoseDetectionScreen() {
             ) {
 
                 pose?.let {
-                    PoseDraw(
-                        pose = it,
+
+                    PoseOverlayScreen(
+                      pose = it,
                         scaleFactor = state.scaleFactor,
-                        extraOffset = state.postScaleWidthOffset
+                        postScaleWidthOffset = state.postScaleWidthOffset,
+                        imgSize = state.imageSize,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .graphicsLayer(scaleX = currentScaleX)
                     )
-
-                    val leftWrist = it.getPoseLandmark(PoseLandmark.LEFT_WRIST)
-                    val leftElbow = it.getPoseLandmark(PoseLandmark.LEFT_ELBOW)
-                    val leftShoulder = it.getPoseLandmark(PoseLandmark.LEFT_SHOULDER)
-
-                    Text(
-                        text = "Angle: ${PoseUtils.getAngle(leftWrist, leftElbow, leftShoulder)}",
-                        color = Color.Red,
-                        fontSize = 26.sp
-                    )
-
                 }
             }
         }

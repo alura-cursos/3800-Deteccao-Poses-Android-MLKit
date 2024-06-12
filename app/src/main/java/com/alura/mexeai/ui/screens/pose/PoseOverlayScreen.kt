@@ -20,18 +20,27 @@ import com.alura.mexeai.ui.components.HandPoints
 import com.alura.mexeai.ui.components.RandomPoint
 import com.alura.mexeai.ui.components.ScoreTimeDisplay
 import com.alura.mexeai.ui.screens.game.EndGameScreen
+import com.alura.mexeai.utils.PoseUtils
 import com.alura.mexeai.utils.PoseUtils.generateRandomPoint
+import com.google.mlkit.vision.pose.Pose
+import com.google.mlkit.vision.pose.PoseLandmark
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun PoseOverlayScreen(
+    pose: Pose,
     scaleFactor: Float,
     postScaleWidthOffset: Float,
     imgSize: Pair<Float, Float>,
     modifier: Modifier = Modifier,
 ) {
-    val startGame = false
+
+    val leftHip = pose.getPoseLandmark(PoseLandmark.LEFT_HIP)
+    val leftElbow = pose.getPoseLandmark(PoseLandmark.LEFT_ELBOW)
+    val leftShoulder = pose.getPoseLandmark(PoseLandmark.LEFT_SHOULDER)
+
+    val startGame = PoseUtils.getAngle(leftElbow, leftShoulder, leftHip) > 140
     var currentScore by remember { mutableIntStateOf(0) }
     var currentTime by remember { mutableIntStateOf(90) }
     var resetGame by remember { mutableStateOf(false) }
@@ -77,6 +86,12 @@ fun PoseOverlayScreen(
                 currentScore += 1
             }
         }
+
+        PoseDraw(
+            pose = pose,
+            scaleFactor = scaleFactor,
+            extraOffset = postScaleWidthOffset
+        )
 
 
         if (inGame) {
