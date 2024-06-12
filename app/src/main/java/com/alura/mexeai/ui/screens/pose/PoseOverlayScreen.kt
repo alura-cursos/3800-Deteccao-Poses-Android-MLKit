@@ -22,6 +22,7 @@ import com.alura.mexeai.ui.components.ScoreTimeDisplay
 import com.alura.mexeai.ui.screens.game.EndGameScreen
 import com.alura.mexeai.utils.PoseUtils
 import com.alura.mexeai.utils.PoseUtils.generateRandomPoint
+import com.alura.mexeai.utils.PoseUtils.isCollision
 import com.google.mlkit.vision.pose.Pose
 import com.google.mlkit.vision.pose.PoseLandmark
 import kotlinx.coroutines.delay
@@ -68,6 +69,9 @@ fun PoseOverlayScreen(
     var collisionDetected by remember { mutableStateOf(false) }
     var leftHandPosition by remember { mutableStateOf(PointF(0f, 0f)) }
     var rightHandPosition by remember { mutableStateOf(PointF(0f, 0f)) }
+
+    leftHandPosition = pose.getPoseLandmark(PoseLandmark.LEFT_INDEX)?.position ?: PointF(0f, 0f)
+    collisionDetected = isCollision(leftHandPosition, randomPoint)
 
     Box(
         contentAlignment = Alignment.BottomCenter,
