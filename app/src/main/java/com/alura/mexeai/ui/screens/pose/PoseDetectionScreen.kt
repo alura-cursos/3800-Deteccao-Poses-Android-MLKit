@@ -10,6 +10,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -21,17 +22,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.PointerIcon.Companion.Text
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.alura.mexeai.ui.screens.camera.CameraPreview
 import com.alura.mexeai.ui.screens.camera.CameraViewModel
+import com.alura.mexeai.utils.PoseUtils
 import com.google.mlkit.vision.pose.Pose
 import com.google.mlkit.vision.pose.PoseDetection
 import com.google.mlkit.vision.pose.PoseLandmark
 import com.google.mlkit.vision.pose.defaults.PoseDetectorOptions
+import kotlin.math.atan2
 
 
 @OptIn(ExperimentalGetImage::class)
@@ -105,17 +110,18 @@ fun PoseDetectionScreen() {
                         scaleFactor = state.scaleFactor,
                         extraOffset = state.postScaleWidthOffset
                     )
-                }
 
-//                Box(
-//                    modifier = Modifier
-//                        .offset(
-//                            x = pointPosition.x.pxToDp(),
-//                            y = pointPosition.y.pxToDp()
-//                        )
-//                        .size(50.dp)
-//                        .background(Color.Red, CircleShape)
-//                )
+                    val leftWrist = it.getPoseLandmark(PoseLandmark.LEFT_WRIST)
+                    val leftElbow = it.getPoseLandmark(PoseLandmark.LEFT_ELBOW)
+                    val leftShoulder = it.getPoseLandmark(PoseLandmark.LEFT_SHOULDER)
+
+                    Text(
+                        text = "Angle: ${PoseUtils.getAngle(leftWrist, leftElbow, leftShoulder)}",
+                        color = Color.Red,
+                        fontSize = 26.sp
+                    )
+
+                }
             }
         }
     }
