@@ -28,6 +28,7 @@ import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.alura.mexeai.ui.screens.camera.CameraPreview
 import com.alura.mexeai.ui.screens.camera.CameraViewModel
+import com.google.mlkit.vision.pose.Pose
 import com.google.mlkit.vision.pose.PoseDetection
 import com.google.mlkit.vision.pose.PoseLandmark
 import com.google.mlkit.vision.pose.defaults.PoseDetectorOptions
@@ -39,8 +40,8 @@ fun PoseDetectionScreen() {
     val viewModel = hiltViewModel<CameraViewModel>()
     val state by viewModel.uiState.collectAsState()
 
-    var pointPosition by remember { mutableStateOf(PointF(0f, 0f)) }
-    var pointPosition2 by remember { mutableStateOf(PointF(0f, 0f)) }
+
+    var pose by remember { mutableStateOf<Pose?>(null) }
 
     val options = remember {
         PoseDetectorOptions.Builder()
@@ -57,17 +58,7 @@ fun PoseDetectionScreen() {
             poseDetector
                 .process(inputImage, imageProxy.imageInfo.rotationDegrees)
                 .addOnSuccessListener { detectedPose ->
-                    detectedPose.getPoseLandmark(PoseLandmark.LEFT_WRIST)?.let {
-                        it.position.let { position ->
-                            pointPosition = position
-                        }
-                    }
-
-                    detectedPose.getPoseLandmark(PoseLandmark.LEFT_ELBOW)?.let {
-                        it.position.let { position ->
-                            pointPosition2 = position
-                        }
-                    }
+                    pose = detectedPose
                 }
                 .addOnCompleteListener {
                     imageProxy.close()
@@ -108,44 +99,13 @@ fun PoseDetectionScreen() {
                 contentAlignment = Alignment.Center
             ) {
 
-                val redColor = Color(0xFFFF0000)
-                Canvas(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp),
-                    onDraw = {
-                        drawCircle(
-                            redColor,
-                            radius = 25f,
-                            center = Offset(
-                                setScale(pointPosition.x, scaleFactor = state.scaleFactor, state.postScaleWidthOffset),
-                                setScale(pointPosition.y, scaleFactor = state.scaleFactor)
-                            )
-                        )
-
-                        drawCircle(
-                            redColor,
-                            radius = 25f,
-                            center = Offset(
-                                setScale(pointPosition2.x, scaleFactor = state.scaleFactor, state.postScaleWidthOffset),
-                                setScale(pointPosition2.y, scaleFactor = state.scaleFactor)
-                            )
-                        )
-
-                        drawLine(
-                            color = Color.Yellow,
-                            strokeWidth = 15f,
-                            start = Offset(
-                                setScale(pointPosition.x, scaleFactor = state.scaleFactor, state.postScaleWidthOffset),
-                                setScale(pointPosition.y, scaleFactor = state.scaleFactor)
-                            ),
-                            end = Offset(
-                                setScale(pointPosition2.x, scaleFactor = state.scaleFactor, state.postScaleWidthOffset),
-                                setScale(pointPosition2.y, scaleFactor = state.scaleFactor)
-                            )
-                        )
-                    }
-                )
+                pose?.let {
+                    PoseDraw(
+                        pose = it,
+                        scaleFactor = state.scaleFactor,
+                        extraOffset = state.postScaleWidthOffset
+                    )
+                }
 
 //                Box(
 //                    modifier = Modifier
