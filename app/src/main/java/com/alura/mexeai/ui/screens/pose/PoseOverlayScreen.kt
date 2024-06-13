@@ -71,7 +71,14 @@ fun PoseOverlayScreen(
     var rightHandPosition by remember { mutableStateOf(PointF(0f, 0f)) }
 
     leftHandPosition = pose.getPoseLandmark(PoseLandmark.LEFT_INDEX)?.position ?: PointF(0f, 0f)
-    collisionDetected = isCollision(leftHandPosition, randomPoint)
+    rightHandPosition = pose.getPoseLandmark(PoseLandmark.RIGHT_INDEX)?.position ?: PointF(0f, 0f)
+    collisionDetected =
+        isCollision(leftHandPosition, randomPoint) || isCollision(rightHandPosition, randomPoint)
+
+
+    if (isCollision(leftHandPosition, rightHandPosition) && !inGame) {
+        resetGame = true
+    }
 
     Box(
         contentAlignment = Alignment.BottomCenter,
